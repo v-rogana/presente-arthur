@@ -7,11 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  background: #0f172a;
   min-height: 100vh;
   font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   color: #e2e8f0;
@@ -19,6 +20,56 @@ body {
   justify-content: center;
   padding: 16px;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Animated background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 600px 600px at 20% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 80% 80%, rgba(139, 92, 246, 0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 400px at 50% 50%, rgba(67, 56, 202, 0.06) 0%, transparent 70%),
+    linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  z-index: -2;
+  animation: bgShift 12s ease-in-out infinite alternate;
+}
+
+@keyframes bgShift {
+  0% { opacity: 1; }
+  50% { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+/* Subtle floating particles */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 70%, rgba(255,255,255,0.1) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 50% 20%, rgba(255,255,255,0.12) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.08) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.1) 0%, transparent 100%);
+  z-index: -1;
+  animation: starsTwinkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes starsTwinkle {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+/* Twemoji sizing */
+img.emoji {
+  height: 1em;
+  width: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+  display: inline;
 }
 
 #app {
@@ -30,17 +81,19 @@ body {
 /* STATS BAR */
 #stats-bar {
   position: sticky;
-  top: 0;
+  top: 8px;
   z-index: 50;
-  background: rgba(15, 23, 42, 0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  border-radius: 0 0 16px 16px;
-  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 18px;
+  padding: 14px 16px;
   margin-bottom: 20px;
   display: none;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 #stats-bar.visible {
@@ -51,47 +104,109 @@ body {
   flex: 1 1 45%;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 13px;
   font-weight: 500;
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.06);
-  transition: background 0.3s, border-color 0.3s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.stat .stat-icon { font-size: 18px; }
-.stat .stat-label { color: #94a3b8; font-size: 11px; }
-.stat .stat-value { margin-left: auto; font-weight: 700; font-size: 15px; color: #818cf8; }
+.stat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0;
+  transition: opacity 0.4s;
+  border-radius: 12px;
+}
 
-.stat.flash-up { background: rgba(74, 222, 128, 0.15); border-color: rgba(74, 222, 128, 0.4); }
-.stat.flash-down { background: rgba(248, 113, 113, 0.15); border-color: rgba(248, 113, 113, 0.4); }
+.stat .stat-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.stat .stat-icon img.emoji {
+  height: 20px;
+  width: 20px;
+}
+
+.stat .stat-label { color: #94a3b8; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat .stat-value {
+  margin-left: auto;
+  font-weight: 700;
+  font-size: 16px;
+  color: #a5b4fc;
+  text-shadow: 0 0 12px rgba(129, 140, 248, 0.4);
+  transition: all 0.3s;
+}
+
+.stat.flash-up {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.3);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
+}
+.stat.flash-up .stat-value { color: #4ade80; text-shadow: 0 0 12px rgba(74, 222, 128, 0.5); }
+
+.stat.flash-down {
+  background: rgba(248, 113, 113, 0.12);
+  border-color: rgba(248, 113, 113, 0.3);
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.15);
+}
+.stat.flash-down .stat-value { color: #f87171; text-shadow: 0 0 12px rgba(248, 113, 113, 0.5); }
 
 /* SCENE CARD */
 .scene-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-  padding: 28px 22px;
-  animation: fadeIn 0.5s ease;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 24px;
+  padding: 32px 24px;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.2),
+    0 1px 0 rgba(255,255,255,0.04) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.scene-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.3), transparent);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .scene-emoji {
-  font-size: 52px;
+  font-size: 56px;
   text-align: center;
-  margin-bottom: 16px;
-  animation: pulse 2s ease-in-out infinite;
+  margin-bottom: 20px;
+  animation: emojiFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+.scene-emoji img.emoji {
+  height: 56px;
+  width: 56px;
+}
+
+@keyframes emojiFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
 .scene-title {
@@ -100,7 +215,8 @@ body {
   font-size: 20px;
   text-align: center;
   margin-bottom: 6px;
-  color: #e2e8f0;
+  color: #f1f5f9;
+  letter-spacing: -0.3px;
 }
 
 .scene-subtitle {
@@ -108,16 +224,17 @@ body {
   color: #818cf8;
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
 }
 
 .scene-text {
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.75;
   color: #cbd5e1;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   min-height: 60px;
   white-space: pre-line;
   cursor: pointer;
@@ -127,6 +244,7 @@ body {
   display: inline;
   color: #818cf8;
   animation: blink 0.6s step-end infinite;
+  text-shadow: 0 0 8px rgba(129, 140, 248, 0.6);
 }
 
 @keyframes blink {
@@ -138,19 +256,32 @@ body {
 .choices { display: flex; flex-direction: column; gap: 10px; }
 
 .choice-btn {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 14px;
-  padding: 14px 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 15px 20px;
   color: #e2e8f0;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(16px);
+  position: relative;
+  overflow: hidden;
+}
+
+.choice-btn::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #818cf8, #6366f1);
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 0 2px 2px 0;
 }
 
 .choice-btn.show {
@@ -160,31 +291,52 @@ body {
 
 .choice-btn:hover, .choice-btn:focus {
   transform: translateX(6px);
-  border-color: #818cf8;
-  background: rgba(129, 140, 248, 0.1);
+  border-color: rgba(129, 140, 248, 0.3);
+  background: rgba(129, 140, 248, 0.08);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+}
+
+.choice-btn:hover::before, .choice-btn:focus::before {
+  opacity: 1;
 }
 
 .choice-btn:active {
   transform: translateX(6px) scale(0.98);
 }
 
+.choice-btn img.emoji {
+  height: 1.1em;
+  width: 1.1em;
+  vertical-align: -0.15em;
+}
+
 /* INTRO SPECIAL */
 .intro-btn {
   display: block;
   margin: 0 auto;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #6366f1, #8b5cf6, #6366f1);
+  background-size: 200% 200%;
+  animation: gradientMove 3s ease infinite;
   border: none;
-  border-radius: 14px;
-  padding: 16px 32px;
+  border-radius: 16px;
+  padding: 18px 36px;
   color: #fff;
   font-family: 'Space Mono', monospace;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(16px);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+  position: relative;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .intro-btn.show {
@@ -193,8 +345,12 @@ body {
 }
 
 .intro-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 40px rgba(99, 102, 241, 0.5);
+}
+
+.intro-btn:active {
+  transform: translateY(-1px);
 }
 
 /* NOTIFICATIONS */
@@ -210,31 +366,49 @@ body {
 }
 
 .notification {
-  background: rgba(30, 27, 75, 0.95);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 12px;
-  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 12px 16px;
   font-size: 13px;
   color: #e2e8f0;
-  animation: slideIn 0.35s ease, fadeOut 0.4s ease 2.2s forwards;
+  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1), fadeOut 0.4s ease 2.2s forwards;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
 }
 
-.notification .notif-icon { font-size: 20px; }
-.notification .notif-text { line-height: 1.3; }
-.notification .notif-app { font-size: 10px; color: #94a3b8; display: block; }
+.notification .notif-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.notification .notif-icon img.emoji { height: 22px; width: 22px; }
+
+.notification .notif-text { line-height: 1.4; }
+.notification .notif-app {
+  font-size: 10px;
+  color: #818cf8;
+  display: block;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1px;
+}
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(100px); }
-  to { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(100px) scale(0.9); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; pointer-events: none; }
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-8px); pointer-events: none; }
 }
 
 /* FINAL SCREEN */
@@ -242,45 +416,82 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin: 20px 0;
+  margin: 24px 0;
 }
 
 .final-stat {
   flex: 1 1 45%;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px;
-  padding: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 16px;
   text-align: center;
+  transition: all 0.3s;
 }
 
-.final-stat .fs-icon { font-size: 28px; }
-.final-stat .fs-label { font-size: 11px; color: #94a3b8; margin: 4px 0; }
-.final-stat .fs-value { font-size: 22px; font-weight: 700; color: #818cf8; }
+.final-stat:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(129, 140, 248, 0.2);
+}
+
+.final-stat .fs-icon {
+  font-size: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.final-stat .fs-icon img.emoji { height: 32px; width: 32px; }
+
+.final-stat .fs-label { font-size: 11px; color: #94a3b8; margin: 4px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.final-stat .fs-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #a5b4fc;
+  text-shadow: 0 0 16px rgba(129, 140, 248, 0.4);
+}
 
 .extra-stats {
-  background: rgba(255,255,255,0.03);
-  border-radius: 12px;
-  padding: 16px;
-  margin: 16px 0;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
   font-size: 13px;
   color: #94a3b8;
-  line-height: 1.8;
+  line-height: 2;
 }
 
-.rank-emoji { font-size: 64px; text-align: center; margin-bottom: 8px; }
+.extra-stats img.emoji { height: 1.1em; width: 1.1em; }
+
+.rank-emoji {
+  font-size: 72px;
+  text-align: center;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,0.3));
+}
+.rank-emoji img.emoji { height: 72px; width: 72px; }
+
 .rank-title {
   font-family: 'Space Mono', monospace;
   font-weight: 700;
-  font-size: 22px;
+  font-size: 24px;
   text-align: center;
   margin-bottom: 4px;
+  background: linear-gradient(135deg, #e2e8f0, #a5b4fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .rank-subtitle {
   text-align: center;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 13px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  font-weight: 500;
 }
 
 /* BIRTHDAY CARD */
@@ -294,48 +505,68 @@ body {
 
 .confetti-piece {
   position: absolute;
-  top: -40px;
-  font-size: 24px;
+  top: -50px;
   animation: confettiFall linear infinite;
 }
 
+.confetti-piece img.emoji { height: 28px; width: 28px; }
+
 @keyframes confettiFall {
-  0% { transform: translateY(-40px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.6; }
+  0% { transform: translateY(-50px) rotate(0deg) scale(1); opacity: 1; }
+  80% { opacity: 0.8; }
+  100% { transform: translateY(110vh) rotate(720deg) scale(0.6); opacity: 0; }
 }
 
 .birthday-msg {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(129, 140, 248, 0.2);
-  border-radius: 16px;
-  padding: 22px;
-  font-size: 14px;
-  line-height: 1.8;
+  background: linear-gradient(135deg, rgba(129, 140, 248, 0.06), rgba(139, 92, 246, 0.06));
+  border: 1px solid rgba(129, 140, 248, 0.15);
+  border-radius: 20px;
+  padding: 24px;
+  font-size: 15px;
+  line-height: 1.85;
   color: #cbd5e1;
-  margin: 20px 0;
+  margin: 24px 0;
+  position: relative;
 }
 
-.birthday-msg p { margin-bottom: 12px; }
+.birthday-msg::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(129, 140, 248, 0.4), transparent);
+}
+
+.birthday-msg p { margin-bottom: 14px; }
 .birthday-msg p:last-child { margin-bottom: 0; }
 
 .replay-btn {
   display: block;
-  margin: 20px auto 0;
-  background: rgba(255,255,255,0.06);
+  margin: 24px auto 0;
+  background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 14px;
-  padding: 14px 28px;
+  border-radius: 16px;
+  padding: 16px 32px;
   color: #e2e8f0;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .replay-btn:hover {
-  border-color: #818cf8;
-  background: rgba(129, 140, 248, 0.1);
+  border-color: rgba(129, 140, 248, 0.3);
+  background: rgba(129, 140, 248, 0.08);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Divider */
+.scene-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  margin: 20px 0;
 }
 </style>
 </head>
@@ -355,7 +586,7 @@ body {
     </div>
     <div class="stat" id="stat-luisa">
       <span class="stat-icon">💍</span>
-      <span class="stat-label">Luísa</span>
+      <span class="stat-label">Luisa</span>
       <span class="stat-value" id="val-luisa">5</span>
     </div>
     <div class="stat" id="stat-dignity">
@@ -368,24 +599,35 @@ body {
 </div>
 
 <script>
+// Parse all existing emojis to Twemoji SVGs
+function parseEmojis(el) {
+  if (typeof twemoji !== 'undefined') {
+    twemoji.parse(el || document.body, {
+      folder: 'svg',
+      ext: '.svg',
+      base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'
+    });
+  }
+}
+
 const stats = { stress: 3, coffee: 2, luisa: 5, dignity: 5 };
 let currentScene = 'intro';
 let typewriterTimer = null;
 let sceneCount = 0;
 
 const notifications = [
-  { icon: '💍', app: 'WhatsApp', text: 'Luísa: "amor vc viu minha msg?"' },
-  { icon: '🔧', app: 'WhatsApp', text: 'Mecânico: "chefe, liga pra mim qnd puder"' },
+  { icon: '💍', app: 'WhatsApp', text: 'Luisa: "amor vc viu minha msg?"' },
+  { icon: '🔧', app: 'WhatsApp', text: 'Mecanico: "chefe, liga pra mim qnd puder"' },
   { icon: '👰', app: 'WhatsApp', text: 'Sogra: "Arthur querido, precisamos conversar"' },
   { icon: '💬', app: 'Slack', text: '#geral: "@Arthur vc viu aquilo?"' },
-  { icon: '💍', app: 'WhatsApp', text: 'Luísa: "???"' },
-  { icon: '🔧', app: 'WhatsApp', text: 'Mecânico: "achei mais uma coisa aqui 😬"' },
+  { icon: '💍', app: 'WhatsApp', text: 'Luisa: "???"' },
+  { icon: '🔧', app: 'WhatsApp', text: 'Mecanico: "achei mais uma coisa aqui 😬"' },
   { icon: '👰', app: 'WhatsApp', text: 'Sogra: "manda foto da pia pra eu ver"' },
-  { icon: '💬', app: 'Slack', text: 'Alan: "Lucas tá errado e eu provo"' },
-  { icon: '💍', app: 'WhatsApp', text: 'Luísa: "tá vivo?"' },
-  { icon: '📋', app: 'Slack', text: 'Lucas: "Alan não entendeu NADA"' },
-  { icon: '💍', app: 'WhatsApp', text: 'Luísa: "ok 🙂"' },
-  { icon: '🔧', app: 'WhatsApp', text: 'Mecânico: "o orçamento subiu um pouquinho"' },
+  { icon: '💬', app: 'Slack', text: 'Alan: "Lucas ta errado e eu provo"' },
+  { icon: '💍', app: 'WhatsApp', text: 'Luisa: "ta vivo?"' },
+  { icon: '📋', app: 'Slack', text: 'Lucas: "Alan nao entendeu NADA"' },
+  { icon: '💍', app: 'WhatsApp', text: 'Luisa: "ok 🙂"' },
+  { icon: '🔧', app: 'WhatsApp', text: 'Mecanico: "o orcamento subiu um pouquinho"' },
 ];
 
 function showNotification() {
@@ -395,6 +637,7 @@ function showNotification() {
   el.className = 'notification';
   el.innerHTML = `<span class="notif-icon">${n.icon}</span><span class="notif-text"><span class="notif-app">${n.app}</span>${n.text}</span>`;
   area.appendChild(el);
+  parseEmojis(el);
   setTimeout(() => el.remove(), 2800);
 }
 
@@ -407,7 +650,7 @@ function changeStat(key, delta) {
             : delta < 0 && (key === 'stress' || key === 'coffee') ? 'flash-up'
             : delta > 0 ? 'flash-up' : 'flash-down';
   statEl.classList.add(cls);
-  setTimeout(() => statEl.classList.remove(cls), 600);
+  setTimeout(() => statEl.classList.remove(cls), 700);
 }
 
 function applyEffects(effects) {
@@ -422,7 +665,7 @@ function typewriter(el, text, cb) {
   let skipped = false;
   const cursor = document.createElement('span');
   cursor.className = 'cursor';
-  cursor.textContent = '▊';
+  cursor.textContent = '\u258A';
 
   function type() {
     if (skipped) return;
@@ -433,6 +676,8 @@ function typewriter(el, text, cb) {
       typewriterTimer = setTimeout(type, 14);
     } else {
       cursor.remove();
+      el.textContent = text;
+      parseEmojis(el);
       if (cb) cb();
     }
   }
@@ -442,6 +687,7 @@ function typewriter(el, text, cb) {
     clearTimeout(typewriterTimer);
     el.textContent = text;
     cursor.remove();
+    parseEmojis(el);
     el.removeEventListener('click', skip);
     if (cb) cb();
   }
@@ -457,6 +703,7 @@ function showChoices(container, choices) {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
     btn.textContent = c.label;
+    parseEmojis(btn);
     btn.onclick = () => {
       applyEffects(c.effects);
       if (c.next) {
@@ -464,7 +711,7 @@ function showChoices(container, choices) {
       }
     };
     wrap.appendChild(btn);
-    setTimeout(() => btn.classList.add('show'), 80 * (i + 1));
+    setTimeout(() => btn.classList.add('show'), 100 * (i + 1));
   });
   container.appendChild(wrap);
 }
@@ -474,7 +721,7 @@ const scenes = {
     emoji: '🎮',
     title: 'SIMULADOR',
     subtitle: 'Um Dia na Vida do Arthur',
-    text: 'Você é Arthur. Está prestes a casar, trabalha na Allos, e tem uma relação complicada com a limpeza. Sobreviva a um dia inteiro sem perder a sanidade.\n\nBoa sorte. Você vai precisar.',
+    text: 'Voce e Arthur. Esta prestes a casar, trabalha na Allos, e tem uma relacao complicada com a limpeza. Sobreviva a um dia inteiro sem perder a sanidade.\n\nBoa sorte. Voce vai precisar.',
     showStats: false,
     introBtn: true,
     next: 'morning',
@@ -482,8 +729,8 @@ const scenes = {
 
   morning: {
     emoji: '⏰',
-    title: '06:47 — O Despertar',
-    text: 'O despertador toca. Você se arrasta até a cozinha. A pia te recebe com camadas arqueológicas de borra de café. De ontem, de anteontem, e possivelmente de 2019.\n\nA borra te olha de volta. Com julgamento.',
+    title: '06:47 \u2014 O Despertar',
+    text: 'O despertador toca. Voce se arrasta ate a cozinha. A pia te recebe com camadas arqueologicas de borra de cafe. De ontem, de anteontem, e possivelmente de 2019.\n\nA borra te olha de volta. Com julgamento.',
     choices: [
       {
         label: '🧽 Limpar a borra agora',
@@ -491,12 +738,12 @@ const scenes = {
         next: 'morning_clean',
       },
       {
-        label: '☕ Fazer mais café (gerando mais borra)',
+        label: '☕ Fazer mais cafe (gerando mais borra)',
         effects: { coffee: 2 },
         next: 'morning_morecoffee',
       },
       {
-        label: '🙈 Fingir que não viu',
+        label: '🙈 Fingir que nao viu',
         effects: { dignity: -1, luisa: -1 },
         next: 'morning_ignore',
       },
@@ -506,31 +753,31 @@ const scenes = {
   morning_clean: {
     emoji: '🧽',
     title: 'A Tentativa',
-    text: 'Você pega a esponja com determinação. 30 segundos depois, desiste. A borra é resistente — parece ter criado raízes. Literalmente grudou na cerâmica.\n\nVocê faz mais café por cima. Pelo menos tentou.',
+    text: 'Voce pega a esponja com determinacao. 30 segundos depois, desiste. A borra e resistente \u2014 parece ter criado raizes. Literalmente grudou na ceramica.\n\nVoce faz mais cafe por cima. Pelo menos tentou.',
     choices: [{ label: '📱 Continuar...', next: 'whatsapp' }],
   },
 
   morning_morecoffee: {
     emoji: '☕',
-    title: 'Camada Geológica',
-    text: 'A pia agora tem 3 camadas geológicas. Se um arqueólogo encontrasse essa pia, publicaria na Nature.\n\n"Descoberta inédita: fósseis de café arábica encontrados em apartamento brasileiro, datados de Era Pré-Casamento."',
+    title: 'Camada Geologica',
+    text: 'A pia agora tem 3 camadas geologicas. Se um arqueologo encontrasse essa pia, publicaria na Nature.\n\n"Descoberta inedita: fosseis de cafe arabica encontrados em apartamento brasileiro, datados de Era Pre-Casamento."',
     choices: [{ label: '📱 Continuar...', next: 'whatsapp' }],
   },
 
   morning_ignore: {
     emoji: '🙈',
-    title: 'Negação Total',
-    text: 'Se eu não olhar, não existe. Filosofia de vida comprovada.\n\nVocê sai da cozinha de costas, lentamente, mantendo contato visual zero com a pia. A borra sabe. Ela sempre sabe.',
+    title: 'Negacao Total',
+    text: 'Se eu nao olhar, nao existe. Filosofia de vida comprovada.\n\nVoce sai da cozinha de costas, lentamente, mantendo contato visual zero com a pia. A borra sabe. Ela sempre sabe.',
     choices: [{ label: '📱 Continuar...', next: 'whatsapp' }],
   },
 
   whatsapp: {
     emoji: '📱',
-    title: '07:30 — O Inferno Digital',
-    text: 'Você abre o celular. O WhatsApp praticamente grita:\n\n💍 Luísa (12 msgs): "amor vc viu o orçamento do buffet?"\n🔧 Mecânico (3 msgs): "chefe o carro tá pronto, ficou R$1.800"\n👔 Allos (8 msgs): "@Arthur urgente"\n👰 Sogra (6 msgs): "Luísa me disse que vocês ainda não..."\n🎂 Mãe (2 msgs): "filho feliz aniver meu bebê 🥰🥰"\n📋 Lucas e Alan (16 msgs): [estão brigando no grupo]',
+    title: '07:30 \u2014 O Inferno Digital',
+    text: 'Voce abre o celular. O WhatsApp praticamente grita:\n\n💍 Luisa (12 msgs): "amor vc viu o orcamento do buffet?"\n🔧 Mecanico (3 msgs): "chefe o carro ta pronto, ficou R$1.800"\n👔 Allos (8 msgs): "@Arthur urgente"\n👰 Sogra (6 msgs): "Luisa me disse que voces ainda nao..."\n🎂 Mae (2 msgs): "filho feliz aniver meu bebe 🥰🥰"\n📋 Lucas e Alan (16 msgs): [estao brigando no grupo]',
     choices: [
       {
-        label: '💍 Luísa (prioridade sobrevivência)',
+        label: '💍 Luisa (prioridade sobrevivencia)',
         effects: { luisa: 2, stress: 1 },
         next: 'whatsapp_luisa',
       },
@@ -540,7 +787,7 @@ const scenes = {
         next: 'whatsapp_allos',
       },
       {
-        label: '✈️ Ninguém. Modo avião. Paz.',
+        label: '✈️ Ninguem. Modo aviao. Paz.',
         effects: { luisa: -2, dignity: -1, stress: -1 },
         next: 'whatsapp_airplane',
       },
@@ -550,31 +797,31 @@ const scenes = {
   whatsapp_luisa: {
     emoji: '💍',
     title: 'Diplomacia Conjugal',
-    text: 'Você responde: "Vi sim amor, tá ótimo!" sem ter visto absolutamente nada.\n\nEla manda um áudio de 4 minutos. Você ouve 11 segundos. Concorda com tudo. O casamento é em breve — sobreviver é o objetivo.\n\nAs outras 43 notificações continuam piscando. Ameaçadoramente.',
+    text: 'Voce responde: "Vi sim amor, ta otimo!" sem ter visto absolutamente nada.\n\nEla manda um audio de 4 minutos. Voce ouve 11 segundos. Concorda com tudo. O casamento e em breve \u2014 sobreviver e o objetivo.\n\nAs outras 43 notificacoes continuam piscando. Ameacadoramente.',
     choices: [{ label: '🏢 Ir pra Allos', next: 'allos' }],
   },
 
   whatsapp_allos: {
     emoji: '👔',
     title: 'Prioridades',
-    text: 'Você abre o Slack. Responde 3 mensagens. Apaga incêndio. Reunião marcada.\n\nEnquanto isso, Luísa manda: "ok, entendi suas prioridades 🙂"\n\nO emoji mais perigoso da língua portuguesa. Aquele 🙂 carrega mais peso que uma tese de doutorado em comunicação passivo-agressiva.',
+    text: 'Voce abre o Slack. Responde 3 mensagens. Apaga incendio. Reuniao marcada.\n\nEnquanto isso, Luisa manda: "ok, entendi suas prioridades 🙂"\n\nO emoji mais perigoso da lingua portuguesa. Aquele 🙂 carrega mais peso que uma tese de doutorado em comunicacao passivo-agressiva.',
     choices: [{ label: '🏢 Ir pra Allos', next: 'allos' }],
   },
 
   whatsapp_airplane: {
     emoji: '✈️',
     title: '3 Minutos de Paz',
-    text: 'Modo avião. Silêncio. O pássaro canta lá fora. O café esfria suavemente. Você fecha os olhos.\n\n3 minutos de paz absoluta.\n\nDepois lembra da reunião às 9h. E que a Luísa tem acesso à sua localização em tempo real. O pássaro para de cantar.',
+    text: 'Modo aviao. Silencio. O passaro canta la fora. O cafe esfria suavemente. Voce fecha os olhos.\n\n3 minutos de paz absoluta.\n\nDepois lembra da reuniao as 9h. E que a Luisa tem acesso a sua localizacao em tempo real. O passaro para de cantar.',
     choices: [{ label: '🏢 Ir pra Allos (correndo)', next: 'allos' }],
   },
 
   allos: {
     emoji: '🏢',
-    title: '09:00 — Chegando na Allos',
-    text: 'Você chega. Abre o notebook. Três coisas te esperam. Cada uma pior que a outra.\n\nEscolha seu veneno:',
+    title: '09:00 \u2014 Chegando na Allos',
+    text: 'Voce chega. Abre o notebook. Tres coisas te esperam. Cada uma pior que a outra.\n\nEscolha seu veneno:',
     choices: [
       {
-        label: '💻 Fazer a LP no Lovable (a ferramenta do demônio)',
+        label: '💻 Fazer a LP no Lovable (a ferramenta do demonio)',
         effects: { stress: 3, dignity: -2 },
         next: 'lovable',
       },
@@ -584,7 +831,7 @@ const scenes = {
         next: 'mediator',
       },
       {
-        label: '📊 Ouvir o novo modelo de negócios',
+        label: '📊 Ouvir o novo modelo de negocios',
         effects: { stress: 1, dignity: -1 },
         next: 'business',
       },
@@ -593,15 +840,15 @@ const scenes = {
 
   lovable: {
     emoji: '💻',
-    title: 'Lovable: A Provação',
-    text: 'Você abre o Lovable. Respira fundo.\n\nArrasta um bloco. Vai pro lugar errado. Desfaz. A página inteira quebra. Refaz. O CSS ignora suas instruções como se tivesse vida própria.\n\n45 minutos. O botão não centraliza. Questiona as escolhas de vida. Pensa em virar pastor.',
+    title: 'Lovable: A Provacao',
+    text: 'Voce abre o Lovable. Respira fundo.\n\nArrasta um bloco. Vai pro lugar errado. Desfaz. A pagina inteira quebra. Refaz. O CSS ignora suas instrucoes como se tivesse vida propria.\n\n45 minutos. O botao nao centraliza. Questiona as escolhas de vida. Pensa em virar pastor.',
     choices: [
       {
         label: '😤 "Eu odeio essa ferramenta"',
         next: 'picole',
       },
       {
-        label: '🔄 "Deixa eu tentar SÓ MAIS UMA VEZ"',
+        label: '🔄 "Deixa eu tentar SO MAIS UMA VEZ"',
         effects: { stress: 3 },
         next: 'lovable_again',
       },
@@ -611,31 +858,31 @@ const scenes = {
   lovable_again: {
     emoji: '🔥',
     title: 'O Lovable Contra-Ataca',
-    text: 'Você tenta mais uma vez. O Lovable deleta o header. Não o seu header. O header do site INTEIRO da Allos.\n\nNão tinha nem como. Mas conseguiu. O Lovable olha pra você e sorri. Com maldade.\n\nVocê fecha o notebook devagar. Abre de novo. O header voltou. Ninguém sabe o que aconteceu. Você decide nunca mais falar sobre isso.',
-    choices: [{ label: '🍦 Preciso de um picolé...', next: 'picole' }],
+    text: 'Voce tenta mais uma vez. O Lovable deleta o header. Nao o seu header. O header do site INTEIRO da Allos.\n\nNao tinha nem como. Mas conseguiu. O Lovable olha pra voce e sorri. Com maldade.\n\nVoce fecha o notebook devagar. Abre de novo. O header voltou. Ninguem sabe o que aconteceu. Voce decide nunca mais falar sobre isso.',
+    choices: [{ label: '🍦 Preciso de um picole...', next: 'picole' }],
   },
 
   mediator: {
     emoji: '⚔️',
     title: 'O Mediador',
-    text: 'Lucas quer ir pra esquerda. Alan quer ir pra direita.\n\nVocê, com a sabedoria de Salomão, sugere o centro.\n\nAmbos discordam. Agora os dois estão bravos com VOCÊ. Promovido de mediador a bode expiatório. Parabéns pela promoção não-remunerada.\n\nLucas e Alan, pela primeira vez no mês, concordam em algo: que você está errado.',
-    choices: [{ label: '🍦 Preciso de um picolé...', next: 'picole' }],
+    text: 'Lucas quer ir pra esquerda. Alan quer ir pra direita.\n\nVoce, com a sabedoria de Salomao, sugere o centro.\n\nAmbos discordam. Agora os dois estao bravos com VOCE. Promovido de mediador a bode expiatorio. Parabens pela promocao nao-remunerada.\n\nLucas e Alan, pela primeira vez no mes, concordam em algo: que voce esta errado.',
+    choices: [{ label: '🍦 Preciso de um picole...', next: 'picole' }],
   },
 
   business: {
     emoji: '📊',
-    title: 'O Novo Modelo de Negócios',
-    text: '"Então Arthur, a ideia é a seguinte..."\n\nSlide 1 de 47.\n\nVocê acena com a cabeça ritmicamente. Olhos abertos, alma saiu no slide 3. No slide 12, pensa no picolé de panetone. No slide 28, pedem sua opinião.\n\n"Faz sentido, preciso digerir."\n\nNinguém questiona. Reunião encerrada. Você não sabe do que se tratava.',
-    choices: [{ label: '🍦 Preciso de um picolé...', next: 'picole' }],
+    title: 'O Novo Modelo de Negocios',
+    text: '"Entao Arthur, a ideia e a seguinte..."\n\nSlide 1 de 47.\n\nVoce acena com a cabeca ritmicamente. Olhos abertos, alma saiu no slide 3. No slide 12, pensa no picole de panetone. No slide 28, pedem sua opiniao.\n\n"Faz sentido, preciso digerir."\n\nNinguem questiona. Reuniao encerrada. Voce nao sabe do que se tratava.',
+    choices: [{ label: '🍦 Preciso de um picole...', next: 'picole' }],
   },
 
   picole: {
     emoji: '🍦',
-    title: '12:30 — O Picolé Sagrado',
-    text: 'Momento de paz.\n\nO picolé de panetone. Sabor estranho? Sim. Faz sentido? Não. Reconfortante de uma forma inexplicável? Absolutamente.\n\nVocê come em silêncio contemplativo enquanto 14 novas notificações chegam. Elas podem esperar. O picolé não pode.',
+    title: '12:30 \u2014 O Picole Sagrado',
+    text: 'Momento de paz.\n\nO picole de panetone. Sabor estranho? Sim. Faz sentido? Nao. Reconfortante de uma forma inexplicavel? Absolutamente.\n\nVoce come em silencio contemplativo enquanto 14 novas notificacoes chegam. Elas podem esperar. O picole nao pode.',
     choices: [
       {
-        label: '🍦 Mais um picolé (eu mereço)',
+        label: '🍦 Mais um picole (eu mereco)',
         effects: { stress: -2 },
         next: 'picole_extra',
       },
@@ -649,23 +896,23 @@ const scenes = {
 
   picole_extra: {
     emoji: '🍦',
-    title: 'O Segundo Picolé',
-    text: 'Ninguém precisa de motivo pra um segundo picolé de panetone.\n\nVocê come olhando pro horizonte como um cowboy contemplando a vastidão. Por 4 minutos, tudo faz sentido no universo.\n\nO gosto de panetone gelado é o equivalente gastronômico de um abraço. Estranho, inesperado, mas genuinamente reconfortante.',
+    title: 'O Segundo Picole',
+    text: 'Ninguem precisa de motivo pra um segundo picole de panetone.\n\nVoce come olhando pro horizonte como um cowboy contemplando a vastidao. Por 4 minutos, tudo faz sentido no universo.\n\nO gosto de panetone gelado e o equivalente gastronomico de um abraco. Estranho, inesperado, mas genuinamente reconfortante.',
     choices: [{ label: '💼 Voltar ao trabalho (agora sim)', next: 'afternoon' }],
   },
 
   afternoon: {
     emoji: '🌅',
-    title: '15:00 — A Reta Final',
-    text: 'O celular vibra 3 vezes seguidas:\n\n💍 Luísa: "amor, a gente precisa resolver a lista de convidados HOJE"\n🔧 Mecânico: "chefe, descobri mais um problema no carro 😬"\n💬 Slack: +23 mensagens não lidas\n\nFaltam 3 horas. Escolha com sabedoria (como se isso fosse possível):',
+    title: '15:00 \u2014 A Reta Final',
+    text: 'O celular vibra 3 vezes seguidas:\n\n💍 Luisa: "amor, a gente precisa resolver a lista de convidados HOJE"\n🔧 Mecanico: "chefe, descobri mais um problema no carro 😬"\n💬 Slack: +23 mensagens nao lidas\n\nFaltam 3 horas. Escolha com sabedoria (como se isso fosse possivel):',
     choices: [
       {
-        label: '💍 Ligar pra Luísa e resolver convidados',
+        label: '💍 Ligar pra Luisa e resolver convidados',
         effects: { luisa: 2, stress: 2 },
         next: 'afternoon_luisa',
       },
       {
-        label: '🔧 Responder o mecânico',
+        label: '🔧 Responder o mecanico',
         effects: { luisa: -2 },
         next: 'afternoon_mechanic',
       },
@@ -679,29 +926,29 @@ const scenes = {
 
   afternoon_luisa: {
     emoji: '💍',
-    title: 'Logística de Casamento',
-    text: '"Amor, o Tio Geraldo não pode sentar do lado da Tia Márcia. Ódio desde 2007. E qual dos 47 primos do seu pai a gente convida?"\n\nVocê olha pro teto. Respira. Começa a fazer contas. Desiste das contas.\n\n"Todos? Nenhum? Metade? Sei lá amor, você decide."\n\nResposta errada. Mas pelo menos ligou.',
+    title: 'Logistica de Casamento',
+    text: '"Amor, o Tio Geraldo nao pode sentar do lado da Tia Marcia. Odio desde 2007. E qual dos 47 primos do seu pai a gente convida?"\n\nVoce olha pro teto. Respira. Comeca a fazer contas. Desiste das contas.\n\n"Todos? Nenhum? Metade? Sei la amor, voce decide."\n\nResposta errada. Mas pelo menos ligou.',
     choices: [{ label: '🏠 Ir pra casa', next: 'home' }],
   },
 
   afternoon_mechanic: {
     emoji: '🔧',
-    title: 'O Mecânico Ataca Novamente',
-    text: '"Chefe, melhor trocar a correia também." +R$600.\n\nVocê concorda sem saber o que é uma correia. Pode ser do motor, pode ser do ventilador, pode ser uma correia de couro. Tanto faz. O carro precisa funcionar pro casamento.\n\n💍 Luísa: "vc não ligou né? 🙂"\n\nO emoji. De novo. Ele te persegue nos sonhos.',
+    title: 'O Mecanico Ataca Novamente',
+    text: '"Chefe, melhor trocar a correia tambem." +R$600.\n\nVoce concorda sem saber o que e uma correia. Pode ser do motor, pode ser do ventilador, pode ser uma correia de couro. Tanto faz. O carro precisa funcionar pro casamento.\n\n💍 Luisa: "vc nao ligou ne? 🙂"\n\nO emoji. De novo. Ele te persegue nos sonhos.',
     choices: [{ label: '🏠 Ir pra casa', next: 'home' }],
   },
 
   afternoon_escape: {
     emoji: '🏃',
     title: 'A Fuga',
-    text: 'Você pega a mochila. Levanta devagar. Caminha até a porta com naturalidade estudada.\n\nSaí às 16h. 43 segundos de liberdade. O vento no rosto. A sensação de—\n\n💬 "@Arthur cadê vc??"\n📞 Ligação perdida: Sogra\n💍 Luísa: "sua sogra tá te ligando"\n\nVocê nunca saiu. Isso nunca aconteceu.',
+    text: 'Voce pega a mochila. Levanta devagar. Caminha ate a porta com naturalidade estudada.\n\nSai as 16h. 43 segundos de liberdade. O vento no rosto. A sensacao de\u2014\n\n💬 "@Arthur cade vc??"\n📞 Ligacao perdida: Sogra\n💍 Luisa: "sua sogra ta te ligando"\n\nVoce nunca saiu. Isso nunca aconteceu.',
     choices: [{ label: '🏠 Ir pra casa (dessa vez de verdade)', next: 'home' }],
   },
 
   home: {
     emoji: '🏠',
-    title: '19:00 — De Volta ao Lar',
-    text: 'Você chega em casa. A pia te recebe. A borra sorri como velha amiga.\n\nLuísa olha pra pia. Olha pra você. Olha pra pia.\n\n"Arthur."\n"..."\n"A pia."\n"..."\n"ARTHUR."',
+    title: '19:00 \u2014 De Volta ao Lar',
+    text: 'Voce chega em casa. A pia te recebe. A borra sorri como velha amiga.\n\nLuisa olha pra pia. Olha pra voce. Olha pra pia.\n\n"Arthur."\n"..."\n"A pia."\n"..."\n"ARTHUR."',
     choices: [
       {
         label: '😅 "Eu ia limpar agora mesmo!"',
@@ -709,12 +956,12 @@ const scenes = {
         next: 'home_excuse',
       },
       {
-        label: '🎭 "Isso é minha coleção, tem valor sentimental"',
+        label: '🎭 "Isso e minha colecao, tem valor sentimental"',
         effects: { luisa: -2, dignity: 1 },
         next: 'home_collection',
       },
       {
-        label: '🧹 Limpar em silêncio e dignidade',
+        label: '🧹 Limpar em silencio e dignidade',
         effects: { luisa: 1, dignity: 2 },
         next: 'home_clean',
       },
@@ -724,21 +971,21 @@ const scenes = {
   home_excuse: {
     emoji: '😅',
     title: 'A Desculpa Universal',
-    text: '"Eu ia limpar agora mesmo! Juro! Tava EXATAMENTE pensando nisso quando entrei!"\n\nLuísa te olha com aquela expressão que diz "eu sei que você está mentindo, você sabe que eu sei, e a gente vai fingir que isso não aconteceu."\n\nO casamento continua de pé. Por enquanto.',
+    text: '"Eu ia limpar agora mesmo! Juro! Tava EXATAMENTE pensando nisso quando entrei!"\n\nLuisa te olha com aquela expressao que diz "eu sei que voce esta mentindo, voce sabe que eu sei, e a gente vai fingir que isso nao aconteceu."\n\nO casamento continua de pe. Por enquanto.',
     choices: [{ label: '📊 Ver como foi meu dia...', next: 'results' }],
   },
 
   home_collection: {
     emoji: '🎭',
-    title: 'A Audácia',
-    text: '"Amor, isso não é sujeira. É uma coleção artesanal de borras orgânicas. Cada camada conta uma história. Essa aqui é do dia que o Lovable deletou o header. Essa é do dia da briga do Lucas com o Alan."\n\nLuísa sai da cozinha sem dizer nada. Você perdeu pontos conjugais mas ganhou respeito próprio pela ousadia.',
+    title: 'A Audacia',
+    text: '"Amor, isso nao e sujeira. E uma colecao artesanal de borras organicas. Cada camada conta uma historia. Essa aqui e do dia que o Lovable deletou o header. Essa e do dia da briga do Lucas com o Alan."\n\nLuisa sai da cozinha sem dizer nada. Voce perdeu pontos conjugais mas ganhou respeito proprio pela ousadia.',
     choices: [{ label: '📊 Ver como foi meu dia...', next: 'results' }],
   },
 
   home_clean: {
     emoji: '✨',
     title: 'O Milagre',
-    text: 'Você pega a esponja. Sem reclamar. Sem piada. Limpa a pia inteira. Em silêncio. Com dignidade.\n\nLuísa para. Olha. Tira foto. Manda no grupo da família: "GENTE OLHA ISSO"\n\nSua mãe chora de emoção. O mecânico manda parabéns (como ele tá nesse grupo?). Até o Lucas e o Alan param de brigar por 3 minutos.\n\nEsse é o auge da sua vida.',
+    text: 'Voce pega a esponja. Sem reclamar. Sem piada. Limpa a pia inteira. Em silencio. Com dignidade.\n\nLuisa para. Olha. Tira foto. Manda no grupo da familia: "GENTE OLHA ISSO"\n\nSua mae chora de emocao. O mecanico manda parabens (como ele ta nesse grupo?). Ate o Lucas e o Alan param de brigar por 3 minutos.\n\nEsse e o auge da sua vida.',
     choices: [{ label: '📊 Ver como foi meu dia...', next: 'results' }],
   },
 };
@@ -751,6 +998,7 @@ function renderScene(sceneId) {
   const statsBar = document.getElementById('stats-bar');
 
   if (sceneId === 'results') { renderResults(); return; }
+  if (sceneId === 'birthday') { renderBirthday(); return; }
 
   if (scene.showStats === false) {
     statsBar.classList.remove('visible');
@@ -758,7 +1006,7 @@ function renderScene(sceneId) {
     statsBar.classList.add('visible');
   }
 
-  // Notifications every 2-3 scenes (not on intro or results)
+  // Notifications every 2-3 scenes
   if (sceneCount > 2 && sceneCount % 2 === 0) {
     setTimeout(showNotification, 800 + Math.random() * 1500);
   }
@@ -789,12 +1037,13 @@ function renderScene(sceneId) {
   card.appendChild(textEl);
 
   container.appendChild(card);
+  parseEmojis(card);
 
   typewriter(textEl, scene.text, () => {
     if (scene.introBtn) {
       const btn = document.createElement('button');
       btn.className = 'intro-btn';
-      btn.textContent = '▶ INICIAR SIMULAÇÃO';
+      btn.innerHTML = '&#9654; INICIAR SIMULACAO';
       btn.onclick = () => renderScene(scene.next);
       card.appendChild(btn);
       setTimeout(() => btn.classList.add('show'), 100);
@@ -812,9 +1061,9 @@ function renderResults() {
   let rankEmoji, rankTitle;
   if (score <= -20) { rankEmoji = '💀'; rankTitle = 'Desastre Ambulante'; }
   else if (score <= -10) { rankEmoji = '🩹'; rankTitle = 'Sobrevivente Acidental'; }
-  else if (score <= -3) { rankEmoji = '😅'; rankTitle = 'Arthur Médio'; }
+  else if (score <= -3) { rankEmoji = '😅'; rankTitle = 'Arthur Medio'; }
   else if (score <= 2) { rankEmoji = '⭐'; rankTitle = 'Arthur Premium'; }
-  else { rankEmoji = '👑'; rankTitle = 'Arthur Lendário'; }
+  else { rankEmoji = '👑'; rankTitle = 'Arthur Lendario'; }
 
   container.innerHTML = `
     <div class="scene-card">
@@ -823,75 +1072,61 @@ function renderResults() {
       <div class="rank-subtitle">Score total: ${score}</div>
       <div class="final-stats">
         <div class="final-stat"><div class="fs-icon">😰</div><div class="fs-label">Estresse</div><div class="fs-value">${stats.stress}</div></div>
-        <div class="final-stat"><div class="fs-icon">☕</div><div class="fs-label">Borras de Café</div><div class="fs-value">${stats.coffee}</div></div>
-        <div class="final-stat"><div class="fs-icon">💍</div><div class="fs-label">Humor da Luísa</div><div class="fs-value">${stats.luisa}</div></div>
+        <div class="final-stat"><div class="fs-icon">☕</div><div class="fs-label">Borras de Cafe</div><div class="fs-value">${stats.coffee}</div></div>
+        <div class="final-stat"><div class="fs-icon">💍</div><div class="fs-label">Humor da Luisa</div><div class="fs-value">${stats.luisa}</div></div>
         <div class="final-stat"><div class="fs-icon">🎩</div><div class="fs-label">Dignidade</div><div class="fs-value">${stats.dignity}</div></div>
       </div>
       <div class="extra-stats">
-        📊 <strong>Relatório do Dia:</strong><br>
-        ☕ Borras de café criadas: ${stats.coffee} (e contando)<br>
+        📊 <strong>Relatorio do Dia:</strong><br>
+        ☕ Borras de cafe criadas: ${stats.coffee} (e contando)<br>
         💬 Mensagens ignoradas: ~47<br>
-        📋 Vezes que ouviu "modelo de negócios": ∞<br>
-        🔧 Gasto no mecânico: incalculável<br>
+        📋 Vezes que ouviu "modelo de negocios": \u221E<br>
+        🔧 Gasto no mecanico: incalculavel<br>
         🙂 Emojis passivo-agressivos recebidos: pelo menos 3<br>
-        🍦 Picolés de panetone merecidos: todos
+        🍦 Picoles de panetone merecidos: todos
       </div>
       <button class="intro-btn show" onclick="renderScene('birthday')" style="margin-top:16px;">Continuar...</button>
     </div>
   `;
+  parseEmojis(container);
 }
-
-scenes.birthday = {
-  emoji: '🎂',
-  title: 'Feliz Aniversário, Arthur!',
-  text: '',
-  showStats: false,
-};
-
-function renderScene_original(sceneId) { renderScene(sceneId); }
-
-const _origRender = renderScene;
-renderScene = function(sceneId) {
-  if (sceneId === 'birthday') {
-    renderBirthday();
-    return;
-  }
-  _origRender(sceneId);
-};
 
 function renderBirthday() {
   document.getElementById('stats-bar').classList.remove('visible');
   const container = document.getElementById('scene-container');
 
   // Confetti
+  document.querySelectorAll('.confetti-container').forEach(el => el.remove());
   const confettiContainer = document.createElement('div');
   confettiContainer.className = 'confetti-container';
   const emojis = ['🎉','🎊','🥳','🎂','✨','🍦','☕','💍'];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 35; i++) {
     const piece = document.createElement('div');
     piece.className = 'confetti-piece';
     piece.textContent = emojis[i % emojis.length];
     piece.style.left = Math.random() * 100 + '%';
-    piece.style.animationDuration = (3 + Math.random() * 4) + 's';
-    piece.style.animationDelay = Math.random() * 3 + 's';
-    piece.style.fontSize = (18 + Math.random() * 16) + 'px';
+    piece.style.animationDuration = (4 + Math.random() * 5) + 's';
+    piece.style.animationDelay = Math.random() * 4 + 's';
+    piece.style.fontSize = (20 + Math.random() * 18) + 'px';
     confettiContainer.appendChild(piece);
   }
   document.body.appendChild(confettiContainer);
+  parseEmojis(confettiContainer);
 
   container.innerHTML = `
     <div class="scene-card" style="text-align:center;">
       <div class="scene-emoji">🎂</div>
-      <div class="scene-title">Feliz Aniversário, Arthur!</div>
+      <div class="scene-title">Feliz Aniversario, Arthur!</div>
       <div class="birthday-msg" style="text-align:left;">
-        <p>Seu dia a dia pode ser caótico — entre borra de café, Lovable, brigas pra mediar, casamento pra planejar e modelos de negócio pra fingir que entendeu.</p>
-        <p>Mas a real é que a Allos não seria a mesma sem você. A comunicação, as ideias, a energia — tudo isso tem a sua marca (e um pouco de borra de café).</p>
-        <p>Que esse novo ano traga menos Lovable, mais picolé de panetone, e uma pia limpinha (a gente pode sonhar).</p>
+        <p>Seu dia a dia pode ser caotico \u2014 entre borra de cafe, Lovable, brigas pra mediar, casamento pra planejar e modelos de negocio pra fingir que entendeu.</p>
+        <p>Mas a real e que a Allos nao seria a mesma sem voce. A comunicacao, as ideias, a energia \u2014 tudo isso tem a sua marca (e um pouco de borra de cafe).</p>
+        <p>Que esse novo ano traga menos Lovable, mais picole de panetone, e uma pia limpinha (a gente pode sonhar).</p>
         <p>Com carinho de toda a equipe! 💜</p>
       </div>
       <button class="replay-btn" onclick="restartGame()">🔄 Jogar de novo</button>
     </div>
   `;
+  parseEmojis(container);
 }
 
 function restartGame() {
@@ -901,10 +1136,15 @@ function restartGame() {
   stats.dignity = 5;
   sceneCount = 0;
   document.querySelectorAll('.confetti-container').forEach(el => el.remove());
+  document.getElementById('val-stress').textContent = '3';
+  document.getElementById('val-coffee').textContent = '2';
+  document.getElementById('val-luisa').textContent = '5';
+  document.getElementById('val-dignity').textContent = '5';
   renderScene('intro');
 }
 
-// Start
+// Initial parse & start
+parseEmojis(document.getElementById('stats-bar'));
 renderScene('intro');
 </script>
 </body>
